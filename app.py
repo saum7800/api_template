@@ -15,7 +15,7 @@ model = tf.keras.models.load_model('model/model.h5')
 def parse_input(request_input):
     request_list=request_input.values()
     request_list=list(request_list)
-    return request_list
+    return np.array([request_list])
 
 
 # convert model prediction to dict to return as JSON
@@ -32,9 +32,8 @@ class MakePrediction(Resource):
             try:
                 request_input = request.get_json()
                 model_input = parse_input(request_input)
-                # print(model_input)
 
-                prediction = model.predict(np.array([model_input]))
+                prediction = model.predict(model_input)
 
                 prediction_index = parse_prediction(prediction)
 
