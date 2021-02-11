@@ -3,6 +3,7 @@ from flask_restful import Api, Resource
 import numpy as np
 import tensorflow as tf
 import traceback
+import json
 
 app = Flask(__name__)
 api = Api(app)
@@ -19,7 +20,9 @@ def parse_input(request_input):
 
 # convert model prediction to dict to return as JSON
 def parse_prediction(prediction):
-    pass
+    prediction=np.argmax(prediction,axis=1)
+    prediction_index=prediction[0]
+    return prediction_index
 
 
 class MakePrediction(Resource):
@@ -33,9 +36,14 @@ class MakePrediction(Resource):
 
                 prediction = model.predict(np.array([model_input]))
 
-                #model_output = parse_prediction(prediction)
+                prediction_index = parse_prediction(prediction)
 
-                return jsonify(string(prediction))
+
+                output_json={ "prediction":int(prediction_index) }
+                
+                print(output_json)
+
+                return jsonify(**model_output)
 
             except:
 
