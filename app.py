@@ -22,8 +22,9 @@ def parse_input(request_input):
 def parse_prediction(prediction):
     prediction=np.argmax(prediction,axis=1)
     prediction_index=prediction[0]
-    return prediction_index
-
+    output_json={ "prediction":int(prediction_index) }
+    # print(output_json)
+    return output_json
 
 class MakePrediction(Resource):
     @staticmethod
@@ -31,17 +32,14 @@ class MakePrediction(Resource):
         if model:
             try:
                 request_input = request.get_json()
+
                 model_input = parse_input(request_input)
+                
                 # print(model_input)
 
                 prediction = model.predict(np.array([model_input]))
 
-                prediction_index = parse_prediction(prediction)
-
-
-                output_json={ "prediction":int(prediction_index) }
-                
-                print(output_json)
+                model_output = parse_prediction(prediction)
 
                 return jsonify(**model_output)
 
